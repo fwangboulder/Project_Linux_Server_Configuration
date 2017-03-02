@@ -63,40 +63,39 @@ prepare it to host my web applications.
 
   2. $finger ubuntu
 
-  Display the followings information about user ubuntu.
+      Display the followings information about user ubuntu.
 
-  ```
-  Login: ubuntu         			Name: Ubuntu
-  Directory: /home/ubuntu     Shell: /bin/bash
-  On since Thu Mar  2 18:10 (UTC) on pts/0 from 72.21.217.69
-   24 minutes 55 seconds idle
-  On since Thu Mar  2 18:10 (UTC) on pts/1 from 72.21.217.143
-   23 minutes 48 seconds idle
-   On since Thu Mar  2 18:13 (UTC) on pts/2 from 209.129.244.192
-   4 seconds idle
-   No mail.
-   No Plan.
-   ```
+        ```
+          Login: ubuntu         			Name: Ubuntu
+          Directory: /home/ubuntu     Shell: /bin/bash
+          On since Thu Mar  2 18:10 (UTC) on pts/0 from 72.21.217.69
+          24 minutes 55 seconds idle
+          On since Thu Mar  2 18:10 (UTC) on pts/1 from 72.21.217.143
+          23 minutes 48 seconds idle
+          On since Thu Mar  2 18:13 (UTC) on pts/2 from 209.129.244.192
+          4 seconds idle
+          No mail.
+            No Plan.
+            ```
+  3. $finger root
 
-   3. $finger root
+      ```
+      Login: root           			Name: root
+      Directory: /root                    	Shell: /bin/bash
+      Never logged in.
+      No mail.
+      No Plan.
+      ```
 
-   ```
-   Login: root           			Name: root
-   Directory: /root                    	Shell: /bin/bash
-   Never logged in.
-   No mail.
-   No Plan.
-   ```
+  4. $finger grader
 
-   4. $finger grader
-
-   finger: grader: no such user.
+      finger: grader: no such user.
 
 **Create a new user grader**
 
-  If you exit the remote terminal, log in as ubuntu.
+      If you exit the remote terminal, log in as ubuntu.
 
-  $ssh ubuntu@54.210.72.218
+      $ssh ubuntu@54.210.72.218
 
   1. $sudo adduser grader
 
@@ -183,6 +182,24 @@ prepare it to host my web applications.
 
           $ssh root@54.210.72.218
 
-      remind: if you followed my instructions and still cannot log in for the users, probably
+      Note: if you followed my instructions and still cannot log in for the users, probably
       you have a mistake for the key file. Go back to check whether your authorized_keys file
       has exactly the same content as that of id_rsa.pub.
+
+**Give grader the permission to sudo**
+
+    1. Log in as grader: $ssh grader@54.210.72.218
+
+    2. $sudo ls /etc/sudoers.d
+
+        [sudo] password for grader:
+        grader is not in the sudoers file.  This incident will be reported.
+
+        This means grader is not in the sudo list.
+    3. $exit
+       $ssh root@54.210.72.218
+       $sudo vi /etc/sudoers.d/grader
+       Add:
+       grader ALL=(ALL) NOPASSWD:ALL
+
+       Now the grader user can use sudo.
