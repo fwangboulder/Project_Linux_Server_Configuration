@@ -203,3 +203,144 @@ prepare it to host my web applications.
        grader ALL=(ALL) NOPASSWD:ALL
 
        Now the grader user can use sudo.
+
+**UFW configuration**
+
+Configure the Uncomplicated Firewall (UFW) to only allow incoming connections
+for SSH (port 2200, default 22), HTTP (port 80), www.
+    $sudo ufw status
+        interactive
+    $sudo ufw allow ssh
+    $sudo ufw allow www
+    $sudo ufw allow 2200/tcp
+    $sudo ufw allow 22/tcp
+    $sudo ufw enable
+    $sudo ufw status
+
+    $ sudo  ufw status
+
+```
+      Status: active
+
+To                         Action      From
+--                         ------      ----
+22                         ALLOW       Anywhere
+2200/tcp                   ALLOW       Anywhere
+22/tcp                     ALLOW       Anywhere
+80/tcp                     ALLOW       Anywhere
+22 (v6)                    ALLOW       Anywhere (v6)
+2200/tcp (v6)              ALLOW       Anywhere (v6)
+22/tcp (v6)                ALLOW       Anywhere (v6)
+80/tcp (v6)                ALLOW       Anywhere (v6)
+
+```
+
+**Change port from default 22 to 2200**
+
+  $sudo vi /etc/ssh/sshd_config
+
+    change port 22 to port 2200
+
+  $sudo service ssh restart
+
+  check if the port has been changed successfully.
+
+  $ exit
+
+  $ssh grader@54.210.72.218
+
+    using default port 22 will not work anymore
+
+  ssh: connect to host 54.210.72.218 port 22: Connection refused
+
+  $ssh grader@54.210.72.218 -p 2200
+
+    This command gives a time out error because you did not set your account firewall
+
+    Go to your amazon lightsail and set the networking. Add a custome TCP 2200
+
+   then run $ssh grader@54.210.72.218 -p 2200
+
+   It works now!!!
+
+**Install Apache**
+
+  $sudo apt-get install apache2
+
+  $ls /var/www/html
+
+   check url: 54.210.72.218
+
+   you will see the apache default index.html content
+
+**Configure Apache**
+
+    Configure Apache to hand-off certain requests to an application handler - mod_wsgi
+
+    **install mod_wsgi**
+
+    $sudo apt-get install libapache2-mod-wsgi
+
+    You then need to configure Apache to handle requests using the WSGI module.
+    You’ll do this by editing the /etc/apache2/sites-enabled/000-default.conf file.
+    This file tells Apache how to respond to requests, where to find the files
+    for a particular site and much more.
+
+    $sudo vi /etc/apache2/sites-enabled/000-default.conf
+
+    add the following line at the end of the <VirtualHost * : 80> block, right
+    before the closing </VirtualHost> line:
+    WSGIScriptAlias / /var/www/html/myapp.wsgi
+
+    restart Apache: $sudo apache2ctl restart
+
+    Check URL: 54.210.72.218  No Found Do not feel panic!! Continue~~~
+
+    You just defined the name of the file you need to write within your Apache
+    configuration by using the WSGIScriptAlias directive. Despite having the
+     extension .wsgi, these are just Python applications.
+     Create the /var/www/html/myapp.wsgi file using the command
+     sudo vi /var/www/html/myapp.wsgi. Within this file, write the following application:
+
+     ```
+     def application(environ, start_response):
+          status = '200 OK'
+          output = 'Hello World!'
+
+          response_headers = [('Content-type', 'text/plain'), ('Content-Length', str(len(output)))]
+    start_response(status, response_headers)
+
+          return [output]
+    ```
+
+    Check URL: 54.210.72.218
+
+    You now see Hello World!
+
+**Install postgresql**
+
+    $sudo apt-get install postgresql
+
+    Update /var/www/html/myapp.wsgi application so that it successfully connects
+     to your database
+
+     Switching Over to the postgres Account
+
+     $sudo -i -u postgres
+
+     Access a Postgres prompt:
+
+     $psql
+
+     Exit
+     # \q
+
+     Create new user:
+
+     $createuser --interactive
+
+     Enter name of role to add: test
+     Shall the new role be a superuser? (y/n) y
+
+     reference:
+     https://www.digitalocean.com/community/tutorials/how-to-install-and-use-postgresql-on-ubuntu-16-04
