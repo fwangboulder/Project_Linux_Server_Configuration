@@ -344,3 +344,154 @@ To                         Action      From
 
      reference:
      https://www.digitalocean.com/community/tutorials/how-to-install-and-use-postgresql-on-ubuntu-16-04
+
+**Install Git**
+
+    $sudo apt-get install git
+
+    Configure git:
+
+      git config --global user.name <Your User Name>
+      git config --global user.email <youruseremail@domain.com>
+      git config --list
+
+**Git Clone Project Item Catalog to this server**
+
+    $sudo mkdir /var/www/catalog
+    $cd /var/www/catalog
+
+    git clone the project and name the folder as catalog
+    $sudo git clone https://github.com/fwangboulder/Project_Item_Catalog.git catalog
+    $ls
+
+**Deploy Flask Application in Ubuntu**
+
+https://www.digitalocean.com/community/tutorials/how-to-deploy-a-flask-application-on-an-ubuntu-vps
+
+
+    **Install Flask**
+
+
+    $sudo apt-get install python-pip
+
+    Install virtuall Environment
+    $sudo pip install virtualenv
+
+    Create a new virtual environment named virtualenv
+    $sudo virtualenv virtualenv
+
+    Activate the virtual environment
+    $source virtualenv/bin/activate
+
+    Install Flask
+    $sudo pip install Flask
+
+    Install other dependencies related to the projects
+    $sudo pip install httplib2 oauth2client sqlalchemy psycopg2 sqlalchemy_utils requests
+
+    $cd catalog
+
+    $sudo cp project.py __init__.py
+
+    $python __init__.py
+
+        ```
+        (virtualenv) grader@ip-172-26-6-138:/var/www/catalog/catalog$ sudo python __init__.py
+          university
+          * Running on http://0.0.0.0:9000/ (Press CTRL+C to quit)
+          * Restarting with stat
+          university
+          * Debugger is active!
+          * Debugger pin code: 119-102-102
+        ```
+      Deactivate the virtual environment
+      $deactivate
+
+  **Config and Enable a New Virtual Host**
+
+    $sudo vi /etc/apache2/sites-available/catalog.conf
+
+     Paste:
+
+     <VirtualHost *: 80>
+        ServerName 54.210.72.218
+        ServerAlias ec2-54-210-72-218.us-east-1a.compute.amazonaws.com
+        ServerAdmin admin@54.210.72.218
+        WSGIDaemonProcess catalog python-path=/var/www/catalog:/var/www/catalog/virtualenv/lib/python2.7/site-packages
+        WSGIProcessGroup catalog
+        WSGIScriptAlias / /var/www/catalog/catalog.wsgi
+        <Directory /var/www/catalog/catalog/>
+          Order allow,deny
+          Allow from all
+        </Directory>
+        Alias /static /var/www/catalog/catalog/static
+        <Directory /var/www/catalog/catalog/static/>
+          Order allow,deny
+          Allow from all
+        </Directory>
+        ErrorLog ${APACHE_LOG_DIR}/error.log
+        LogLevel warn
+        CustomLog ${APACHE_LOG_DIR}/access.log combined
+      </VirtualHost>
+
+    *************
+    $sudo a2ensite catalog
+    enable the virtual host
+    **************
+
+    update path of client_secrets.json file
+
+    $sudo vi __init__.py
+    change the path to /var/www/catalog/catalog/client_secrets.json
+
+
+    **Create catalog.wsgi File**
+    $sudo vi /var/www/catalog/catalog.wsgi
+
+    paste this into it:
+    import sys
+    import logging
+    logging.basicConfig(stream=sys.stderr)
+    sys.path.insert(0, "/var/www/catalog/")
+
+    from catalog import app as application
+    application.secret_key = 'super_secret_key'
+
+    **Install and configure PostgreSQL**
+
+    Get help from https://github.com/rrjoson/udacity-linux-server-configuration
+
+
+    $sudo apt-get install libpq-dev python-dev
+    $sudo apt-get install postgresql postgresql-contrib
+    $sudo su - postgres
+    psql
+    CREATE USER catalog WITH PASSWORD 'password';
+    ALTER USER catalog CREATEDB;
+    CREATE DATABASE catalog WITH OWNER catalog;
+    \c catalog
+    REVOKE ALL ON SCHEMA public FROM public;
+    GRANT ALL ON SCHEMA public TO catalog;
+    \q
+
+    Change engine in __init__.py, database_setup.py and alumni.py to :
+    engine = create_engine('postgresql://catalog:password@localhost/catalog')
+
+    $python /var/www/catalog/catalog/database_setup.py
+    $python /var/www/catalog/catalog/alumni.py
+    Make sure no remote connections to the database are allowed.
+    $sudo nano /etc/postgresql/9.5/main/pg_hba.conf
+    You will see the file looks like:
+    local   all             postgres                                peer
+    local   all             all                                     peer
+    host    all             all             127.0.0.1/32            md5
+    host    all             all             ::1/128                 md5
+
+
+    Check URL: http://54.210.72.218
+
+    It works great!!!
+
+    **Fix third party login problem**
+
+    
