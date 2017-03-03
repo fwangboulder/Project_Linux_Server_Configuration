@@ -236,19 +236,22 @@ prepare it to host my web applications.
 
 
       Status: active
+      ```
+      Result:
+      
+      ```
+      To                         Action      From
+      --                         ------      ----
+      22                         ALLOW       Anywhere
+      2200/tcp                   ALLOW       Anywhere
+      22/tcp                     ALLOW       Anywhere
+      80/tcp                     ALLOW       Anywhere
+      22 (v6)                    ALLOW       Anywhere (v6)
+      2200/tcp (v6)              ALLOW       Anywhere (v6)
+      22/tcp (v6)                ALLOW       Anywhere (v6)
+      80/tcp (v6)                ALLOW       Anywhere (v6)
 
-To                         Action      From
---                         ------      ----
-22                         ALLOW       Anywhere
-2200/tcp                   ALLOW       Anywhere
-22/tcp                     ALLOW       Anywhere
-80/tcp                     ALLOW       Anywhere
-22 (v6)                    ALLOW       Anywhere (v6)
-2200/tcp (v6)              ALLOW       Anywhere (v6)
-22/tcp (v6)                ALLOW       Anywhere (v6)
-80/tcp (v6)                ALLOW       Anywhere (v6)
-
-```
+      ```
 
 ##Section VIII: Change port from default 22 to 2200
 
@@ -530,5 +533,3 @@ https://www.digitalocean.com/community/tutorials/how-to-deploy-a-flask-applicati
     Fill in the client_id and client_secret fields in the file g_client_secrets.json. Also change the javascript_origins field to the IP address and AWS assigned URL of the host. In this instance that would be:
     "javascript_origins":["http://54.210.72.218",
     "http://ec2-54-210-72-218.compute-1.amazonaws.com"]
-
-    
