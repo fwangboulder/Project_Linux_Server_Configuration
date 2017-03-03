@@ -363,7 +363,7 @@ https://www.digitalocean.com/community/tutorials/how-to-deploy-a-flask-applicati
       git config --global user.name <Your User Name>
       git config --global user.email <youruseremail@domain.com>
       git config --list
-      
+
       ```
 
   **Git Clone Project Item Catalog to this server**
@@ -432,7 +432,7 @@ https://www.digitalocean.com/community/tutorials/how-to-deploy-a-flask-applicati
 
      <VirtualHost *: 80>
         ServerName 54.210.72.218
-        ServerAlias ec2-54-210-72-218.us-east-1a.compute.amazonaws.com
+        ServerAlias ec2-54-210-72-218.compute-1.amazonaws.com
         ServerAdmin admin@54.210.72.218
         WSGIDaemonProcess catalog python-path=/var/www/catalog:/var/www/catalog/virtualenv/lib/python2.7/site-packages
         WSGIProcessGroup catalog
@@ -530,8 +530,29 @@ https://www.digitalocean.com/community/tutorials/how-to-deploy-a-flask-applicati
 
     **Fix third party login problem**
 
-    Update the Google OAuth client secrets file
+    Google Sign In:
 
-    Fill in the client_id and client_secret fields in the file g_client_secrets.json. Also change the javascript_origins field to the IP address and AWS assigned URL of the host. In this instance that would be:
-    "javascript_origins":["http://54.210.72.218",
-    "http://ec2-54-210-72-218.compute-1.amazonaws.com"]
+    Go to Google API console: https://accounts.google.com/ServiceLogin?service=cloudconsole&ltmpl=api&osid=1&passive=true&continue=https://console.developers.google.com/
+
+    Add JavaScript origins and redirect URIs:
+
+    Authorized JavaScript origins:
+    http://localhost:9000
+
+    http://54.210.72.218
+
+    http://ec2-54-210-72-218.compute-1.amazonaws.com
+
+    Authorized redirect URIs:
+
+    http://localhost:9000/university
+
+    http://ec2-54-210-72-218.compute-1.amazonaws.com/university/oauth2callback
+
+    Changed the client_serects file to make sure add the extra URIs.
+
+    Restart apache server and enabled virtual host
+
+    $sudo service apache2 restart
+
+    $sudo a2ensite catalog
