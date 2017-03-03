@@ -367,7 +367,7 @@ In order for your project to be reviewed, the grader needs to be able to log in 
 
 ##Section VII: Apache
 
-  **Install Apache**
+  **A. Install Apache**
 
     ```
       $sudo apt-get install apache2
@@ -380,7 +380,7 @@ In order for your project to be reviewed, the grader needs to be able to log in 
 
     ```
 
-   **Configure Apache**
+   **B. Configure Apache**
 
       Configure Apache to hand-off certain requests to an application handler - mod_wsgi
 
@@ -436,7 +436,7 @@ In order for your project to be reviewed, the grader needs to be able to log in 
 
 
 
-  **Install Git**
+  **A. Install Git**
 
     $sudo apt-get install git
 
@@ -449,7 +449,7 @@ In order for your project to be reviewed, the grader needs to be able to log in 
 
       ```
 
-  **Git Clone Project Item Catalog to this server**
+  **B. Git Clone Project Item Catalog to this server**
 
     $sudo mkdir /var/www/catalog
 
@@ -462,7 +462,7 @@ In order for your project to be reviewed, the grader needs to be able to log in 
     $ls
 
 
-  **Install Flask**
+  **C. Install Flask**
 
 
     $sudo apt-get install python-pip
@@ -506,7 +506,7 @@ In order for your project to be reviewed, the grader needs to be able to log in 
 
     $deactivate
 
-  **Config and Enable a New Virtual Host**
+  **D. Config and Enable a New Virtual Host**
 
     1. $sudo vi /etc/apache2/sites-available/catalog.conf
 
@@ -550,7 +550,7 @@ In order for your project to be reviewed, the grader needs to be able to log in 
         Change all fbclientsecrets.json to /var/www/catalog/catalog/fbclientsecrets.json
 
 
-    **Create catalog.wsgi File**
+    **E. Create catalog.wsgi File**
 
     1. $sudo vi /var/www/catalog/catalog.wsgi
 
@@ -567,7 +567,7 @@ In order for your project to be reviewed, the grader needs to be able to log in 
 
     ```
 
-    **Install and configure PostgreSQL**
+    **F. Install and configure PostgreSQL**
 
     Reference:
      https://github.com/rrjoson/udacity-linux-server-configuration
@@ -615,7 +615,7 @@ In order for your project to be reviewed, the grader needs to be able to log in 
 
     It works great!!!
 
-    **Fix third party login problem**
+    **G. Fix third party login problem**
 
     Google Sign In:
 
@@ -655,7 +655,7 @@ In order for your project to be reviewed, the grader needs to be able to log in 
     check the error. one possible reason is that  you forget the step 3 of
     "Config and Enable a New Virtual Host" part of this Section.
 
-    **facebook sign in**
+    Facebook sign in:
 
     Log in Facebook:
     https://www.facebook.com/login.php?next=https%3A%2F%2Fdevelopers.facebook.com%2Fapps
@@ -684,4 +684,4 @@ In order for your project to be reviewed, the grader needs to be able to log in 
     $sudo tail -f /var/log/apache2/error.log
 
     check the error. one possible reason is that  you forget the step 3 of
-    "Config and Enable a New Virtual Host" part of this Section.
+    "D. Config and Enable a New Virtual Host" part of this Section.
