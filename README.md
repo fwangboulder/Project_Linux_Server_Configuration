@@ -437,9 +437,9 @@ In order for your project to be reviewed, the grader needs to be able to log in 
 
   **A. Install Git**
 
-    $sudo apt-get install git
+  $sudo apt-get install git
 
-    Configure git:
+  Configure git:
 
       ```
       git config --global user.name <Your User Name>
@@ -450,39 +450,39 @@ In order for your project to be reviewed, the grader needs to be able to log in 
 
   **B. Git Clone Project Item Catalog to this server**
 
-    $sudo mkdir /var/www/catalog
+  $sudo mkdir /var/www/catalog
 
-    $cd /var/www/catalog
+  $cd /var/www/catalog
 
-    git clone the project and name the folder as catalog
+  git clone the project and name the folder as catalog:
 
-    $sudo git clone https://github.com/fwangboulder/Project_Item_Catalog.git catalog
+  $sudo git clone https://github.com/fwangboulder/Project_Item_Catalog.git catalog
 
-    $ls
+  $ls
 
 
   **C. Install Flask**
 
 
-    $sudo apt-get install python-pip
+  1. $sudo apt-get install python-pip
 
-    Install virtuall Environment
+  2. Install virtuall Environment:
 
     $sudo pip install virtualenv
 
-    Create a new virtual environment named virtualenv
+  3. Create a new virtual environment named virtualenv:
 
     $sudo virtualenv virtualenv
 
-    Activate the virtual environment
+  4. Activate the virtual environment:
 
     $source virtualenv/bin/activate
 
-    Install Flask
+  5. Install Flask:
 
     $sudo pip install Flask
 
-    Install other dependencies related to the projects
+  6. Install other dependencies related to the projects:
 
     $sudo pip install httplib2 oauth2client sqlalchemy psycopg2 sqlalchemy_utils requests
 
@@ -501,15 +501,15 @@ In order for your project to be reviewed, the grader needs to be able to log in 
           * Debugger is active!
           * Debugger pin code: 119-102-102
         ```
-    Deactivate the virtual environment:
+  7. Deactivate the virtual environment:
 
     $deactivate
 
   **D. Config and Enable a New Virtual Host**
 
-    1. $sudo vi /etc/apache2/sites-available/catalog.conf
+  1. $sudo vi /etc/apache2/sites-available/catalog.conf
 
-        Paste:
+    Paste:
 
      ```
 
@@ -535,12 +535,12 @@ In order for your project to be reviewed, the grader needs to be able to log in 
       </VirtualHost>
 
       ```
-    2. $sudo a2ensite catalog
+  2. $sudo a2ensite catalog
 
       This is to enable the virtual host
 
 
-    3. Correct the file paths of client_secrets.json and fbclientsecrets.json in __init__.py
+  3. Correct the file paths of client_secrets.json and fbclientsecrets.json in __init__.py
 
         $sudo vi __init__.py
 
@@ -549,9 +549,9 @@ In order for your project to be reviewed, the grader needs to be able to log in 
         Change all fbclientsecrets.json to /var/www/catalog/catalog/fbclientsecrets.json
 
 
-    **E. Create catalog.wsgi File**
+  **E. Create catalog.wsgi File**
 
-    1. $sudo vi /var/www/catalog/catalog.wsgi
+  1. $sudo vi /var/www/catalog/catalog.wsgi
 
         Paste the following content into it:
 
@@ -566,17 +566,17 @@ In order for your project to be reviewed, the grader needs to be able to log in 
 
     ```
 
-    **F. Install and configure PostgreSQL**
+  **F. Install and configure PostgreSQL**
 
-    Reference:
+  Reference:
      https://github.com/rrjoson/udacity-linux-server-configuration
      https://www.digitalocean.com/community/tutorials/how-to-install-and-use-postgresql-on-ubuntu-16-04
 
-    1. $sudo apt-get install libpq-dev python-dev
+  1. $sudo apt-get install libpq-dev python-dev
 
-    2. $sudo apt-get install postgresql postgresql-contrib
+  2. $sudo apt-get install postgresql postgresql-contrib
 
-    3. $sudo su - postgres
+  3. $sudo su - postgres
 
     ```
     psql
@@ -589,15 +589,15 @@ In order for your project to be reviewed, the grader needs to be able to log in 
     \q
     ```
 
-    4. Change engine in __init__.py, database_setup.py and alumni.py to :
+  4. Change engine in __init__.py, database_setup.py and alumni.py to :
 
         engine = create_engine('postgresql://catalog:password@localhost/catalog')
 
-    5. $python /var/www/catalog/catalog/database_setup.py
+  5. $python /var/www/catalog/catalog/database_setup.py
 
        $python /var/www/catalog/catalog/alumni.py
 
-    6. Make sure no remote connections to the database are allowed.
+  6. Make sure no remote connections to the database are allowed.
 
       $sudo nano /etc/postgresql/9.5/main/pg_hba.conf
 
@@ -614,15 +614,15 @@ In order for your project to be reviewed, the grader needs to be able to log in 
 
     It works great!!!
 
-    **G. Fix third party login problem**
+  **G. Fix third party login problem**
 
-    Google Sign In:
+  Google Sign In:
 
-    Go to Google API console: https://accounts.google.com/ServiceLogin?service=cloudconsole&ltmpl=api&osid=1&passive=true&continue=https://console.developers.google.com/
+  Go to Google API console: https://accounts.google.com/ServiceLogin?service=cloudconsole&ltmpl=api&osid=1&passive=true&continue=https://console.developers.google.com/
 
-    Add JavaScript origins and redirect URIs:
+  Add JavaScript origins and redirect URIs:
 
-    Authorized JavaScript origins:
+  Authorized JavaScript origins:
 
     http://localhost:9000
 
@@ -630,47 +630,47 @@ In order for your project to be reviewed, the grader needs to be able to log in 
 
     http://ec2-54-210-72-218.compute-1.amazonaws.com
 
-    Authorized redirect URIs:
+  Authorized redirect URIs:
 
     http://localhost:9000/university
 
     http://ec2-54-210-72-218.compute-1.amazonaws.com/university/oauth2callback
 
-    Changed the client_serects.json file to make sure add the extra URIs. This
-    is super important!!!
+  Changed the client_serects.json file to make sure add the extra URIs. This
+  is super important!!!
 
-    Restart apache server and enabled virtual host:
+  Restart apache server and enabled virtual host:
 
     $sudo service apache2 restart
 
     $sudo a2ensite catalog
 
-    Visit http://ec2-54-210-72-218.compute-1.amazonaws.com/
+  Visit http://ec2-54-210-72-218.compute-1.amazonaws.com/
 
-    If not working:
+  If not working:
 
     $sudo tail -f /var/log/apache2/error.log
 
     check the error. one possible reason is that  you forget the step 3 of
     "Config and Enable a New Virtual Host" part of this Section.
 
-    Facebook sign in:
+  Facebook sign in:
 
-    Log in Facebook:
+  Log in Facebook:
     https://www.facebook.com/login.php?next=https%3A%2F%2Fdevelopers.facebook.com%2Fapps
 
-    Find your app and on the left panel of the web page, you can see add product option.
-    Click +Add Product;
-    Then click GetStarted of Facebook Login
+  Find your app and on the left panel of the web page, you can see add product option.
+  Click +Add Product;
+  Then click GetStarted of Facebook Login
 
-    In Valid OAuth redirect URIs, add the following:
+  In Valid OAuth redirect URIs, add the following:
 
     http://ec2-54-210-72-218.compute-1.amazonaws.com
 
     http://54.210.72.218
 
 
-    Restart apache server and enabled virtual host:
+  Restart apache server and enabled virtual host:
 
     $sudo service apache2 restart
 
@@ -678,7 +678,7 @@ In order for your project to be reviewed, the grader needs to be able to log in 
 
     Visit http://ec2-54-210-72-218.compute-1.amazonaws.com/
 
-    If not working:
+  If not working:
 
     $sudo tail -f /var/log/apache2/error.log
 
