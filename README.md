@@ -6,26 +6,40 @@ prepare it to host my web applications.
 
 
 
-**Amazon Lightsail Start**
+##Section I: Amazon Lightsail Start
 
- 1. Log in!  Create an Amazon Web Services account if you do not have one.
+  1. Log in!  Create an Amazon Web Services account if you do not have one.
 
- 2. Create an instance.
+  2. Create an instance.
 
- 3. Choose an instance image (OS only): Ubuntu
+  3. Choose an instance image (OS only): Ubuntu
 
- 4. Choose your instance plan.
+  4. Choose your instance plan.
 
- 5. Give your instance a hostname(this is flexible): alumni
+  5. Give your instance a hostname(this is flexible): alumni
 
- 6. Wait for it to start up and then connect using SSH.
+  6. Wait for it to start up and then connect using SSH.
 
- 7. Record your public IP address: Public IP address 54.210.72.218
+  7. Record your public IP address: Public IP address 54.210.72.218
 
-**Key generation**
+  8. $sudo dpkg-reconfigure tzdata
+
+      Select:
+
+      None of above
+
+      UTC
+
+      Current default time zone: 'Etc/UTC'
+
+      Local time is now:      Fri Mar  3 02:52:36 UTC 2017.
+
+      Universal Time is now:  Fri Mar  3 02:52:36 UTC 2017.
+
+##Section II: Key generation
 
 
- 1. Local terminal
+  1. Local terminal
 
     $ssh-keygen
 
@@ -35,14 +49,14 @@ prepare it to host my web applications.
 
     copy the content
 
- 2. remote terminal connected through the account.
+  2. remote terminal connected through the account.
 
     $vi /home/ubuntu/.ssh/authorized_keys
 
     paste the content of id_rsa.pub into authorized_keys. Make sure you do not have
     extra space for the content. Double check id_rsa.pub and authorized have exactly the same content.
 
- 3. Go back to local terminal:
+  3. Go back to local terminal:
 
     $ ssh ubuntu@54.210.72.218
 
@@ -53,12 +67,14 @@ prepare it to host my web applications.
 
     type yes. Now you log in from local terminal to remote terminal using ubuntu.
 
-**Update Software**
+##Section III: Update Software
 
   1. $sudo apt-get update
 
   2. $sudo apt-get upgrade
-**Install Finger**
+
+##Section IV: Install Finger
+
   1. $sudo apt-get install finger
 
   2. $finger ubuntu
@@ -91,7 +107,7 @@ prepare it to host my web applications.
 
       finger: grader: no such user.
 
-**Create a new user grader**
+##Section V: Create a new user grader
 
       If you exit the remote terminal, log in as ubuntu.
 
@@ -186,17 +202,17 @@ prepare it to host my web applications.
       you have a mistake for the key file. Go back to check whether your authorized_keys file
       has exactly the same content as that of id_rsa.pub.
 
-**Give grader the permission to sudo**
+##Section VI: Give grader the permission to sudo
 
-    1. Log in as grader: $ssh grader@54.210.72.218
+  1. Log in as grader: $ssh grader@54.210.72.218
 
-    2. $sudo ls /etc/sudoers.d
+  2. $sudo ls /etc/sudoers.d
 
         [sudo] password for grader:
         grader is not in the sudoers file.  This incident will be reported.
 
         This means grader is not in the sudo list.
-    3. $exit
+  3. $exit
        $ssh root@54.210.72.218
        $sudo vi /etc/sudoers.d/grader
        Add:
@@ -204,12 +220,13 @@ prepare it to host my web applications.
 
        Now the grader user can use sudo.
 
-**UFW configuration**
+##Section VII: UFW configuration
 
-Configure the Uncomplicated Firewall (UFW) to only allow incoming connections
-for SSH (port 2200, default 22), HTTP (port 80), www.
+    Configure the Uncomplicated Firewall (UFW) to only allow incoming connections
+    for SSH (port 2200, default 22), HTTP (port 80), www.
+
+    ```
     $sudo ufw status
-        interactive
     $sudo ufw allow ssh
     $sudo ufw allow www
     $sudo ufw allow 2200/tcp
@@ -217,9 +234,7 @@ for SSH (port 2200, default 22), HTTP (port 80), www.
     $sudo ufw enable
     $sudo ufw status
 
-    $ sudo  ufw status
 
-```
       Status: active
 
 To                         Action      From
@@ -235,7 +250,9 @@ To                         Action      From
 
 ```
 
-**Change port from default 22 to 2200**
+##Section VIII: Change port from default 22 to 2200
+
+  ```
 
   $sudo vi /etc/ssh/sshd_config
 
@@ -263,8 +280,12 @@ To                         Action      From
 
    It works now!!!
 
-**Install Apache**
+   ```
 
+##Section IX: Apache
+  **Install Apache**
+
+    ```
   $sudo apt-get install apache2
 
   $ls /var/www/html
@@ -273,11 +294,15 @@ To                         Action      From
 
    you will see the apache default index.html content
 
-**Configure Apache**
+   ```
 
-    Configure Apache to hand-off certain requests to an application handler - mod_wsgi
+   **Configure Apache**
+
+      Configure Apache to hand-off certain requests to an application handler - mod_wsgi
 
     **install mod_wsgi**
+
+
 
     $sudo apt-get install libapache2-mod-wsgi
 
@@ -317,76 +342,60 @@ To                         Action      From
 
     You now see Hello World!
 
-**Install postgresql**
+##Section X: Deploy Flask Application in Ubuntu
 
-    $sudo apt-get install postgresql
+reference:
+https://www.digitalocean.com/community/tutorials/how-to-deploy-a-flask-application-on-an-ubuntu-vps
 
-    Update /var/www/html/myapp.wsgi application so that it successfully connects
-     to your database
 
-     Switching Over to the postgres Account
 
-     $sudo -i -u postgres
-
-     Access a Postgres prompt:
-
-     $psql
-
-     Exit
-     # \q
-
-     Create new user:
-
-     $createuser --interactive
-
-     Enter name of role to add: test
-     Shall the new role be a superuser? (y/n) y
-
-     reference:
-     https://www.digitalocean.com/community/tutorials/how-to-install-and-use-postgresql-on-ubuntu-16-04
-
-**Install Git**
+  **Install Git**
 
     $sudo apt-get install git
 
     Configure git:
 
+      ```
       git config --global user.name <Your User Name>
       git config --global user.email <youruseremail@domain.com>
       git config --list
+      ```
 
-**Git Clone Project Item Catalog to this server**
+  **Git Clone Project Item Catalog to this server**
 
     $sudo mkdir /var/www/catalog
+
     $cd /var/www/catalog
 
     git clone the project and name the folder as catalog
+
     $sudo git clone https://github.com/fwangboulder/Project_Item_Catalog.git catalog
+
     $ls
 
-**Deploy Flask Application in Ubuntu**
-
-https://www.digitalocean.com/community/tutorials/how-to-deploy-a-flask-application-on-an-ubuntu-vps
-
-
-    **Install Flask**
+  **Install Flask**
 
 
     $sudo apt-get install python-pip
 
     Install virtuall Environment
+
     $sudo pip install virtualenv
 
     Create a new virtual environment named virtualenv
+
     $sudo virtualenv virtualenv
 
     Activate the virtual environment
+
     $source virtualenv/bin/activate
 
     Install Flask
+
     $sudo pip install Flask
 
     Install other dependencies related to the projects
+
     $sudo pip install httplib2 oauth2client sqlalchemy psycopg2 sqlalchemy_utils requests
 
     $cd catalog
@@ -404,14 +413,17 @@ https://www.digitalocean.com/community/tutorials/how-to-deploy-a-flask-applicati
           * Debugger is active!
           * Debugger pin code: 119-102-102
         ```
-      Deactivate the virtual environment
-      $deactivate
+    Deactivate the virtual environment
+
+    $deactivate
 
   **Config and Enable a New Virtual Host**
 
-    $sudo vi /etc/apache2/sites-available/catalog.conf
+    1. $sudo vi /etc/apache2/sites-available/catalog.conf
 
-     Paste:
+        Paste:
+
+     ```
 
      <VirtualHost *: 80>
         ServerName 54.210.72.218
@@ -434,21 +446,25 @@ https://www.digitalocean.com/community/tutorials/how-to-deploy-a-flask-applicati
         CustomLog ${APACHE_LOG_DIR}/access.log combined
       </VirtualHost>
 
-    *************
-    $sudo a2ensite catalog
-    enable the virtual host
-    **************
+      ```
+    2. $sudo a2ensite catalog
 
-    update path of client_secrets.json file
+      enable the virtual host
 
-    $sudo vi __init__.py
-    change the path to /var/www/catalog/catalog/client_secrets.json
+
+    3. update path of client_secrets.json file
+
+        $sudo vi __init__.py
+
+        change the path to /var/www/catalog/catalog/client_secrets.json
 
 
     **Create catalog.wsgi File**
-    $sudo vi /var/www/catalog/catalog.wsgi
 
-    paste this into it:
+    1. $sudo vi /var/www/catalog/catalog.wsgi
+
+        paste this into it:
+        ```
     import sys
     import logging
     logging.basicConfig(stream=sys.stderr)
@@ -457,14 +473,21 @@ https://www.digitalocean.com/community/tutorials/how-to-deploy-a-flask-applicati
     from catalog import app as application
     application.secret_key = 'super_secret_key'
 
+    ```
+
     **Install and configure PostgreSQL**
 
-    Get help from https://github.com/rrjoson/udacity-linux-server-configuration
+    reference:
+     https://github.com/rrjoson/udacity-linux-server-configuration
+     https://www.digitalocean.com/community/tutorials/how-to-install-and-use-postgresql-on-ubuntu-16-04
 
+    1. $sudo apt-get install libpq-dev python-dev
 
-    $sudo apt-get install libpq-dev python-dev
-    $sudo apt-get install postgresql postgresql-contrib
-    $sudo su - postgres
+    2. $sudo apt-get install postgresql postgresql-contrib
+
+    3. $sudo su - postgres
+
+    ```
     psql
     CREATE USER catalog WITH PASSWORD 'password';
     ALTER USER catalog CREATEDB;
@@ -473,25 +496,39 @@ https://www.digitalocean.com/community/tutorials/how-to-deploy-a-flask-applicati
     REVOKE ALL ON SCHEMA public FROM public;
     GRANT ALL ON SCHEMA public TO catalog;
     \q
+    ```
 
-    Change engine in __init__.py, database_setup.py and alumni.py to :
-    engine = create_engine('postgresql://catalog:password@localhost/catalog')
+    4. Change engine in __init__.py, database_setup.py and alumni.py to :
 
-    $python /var/www/catalog/catalog/database_setup.py
-    $python /var/www/catalog/catalog/alumni.py
-    Make sure no remote connections to the database are allowed.
-    $sudo nano /etc/postgresql/9.5/main/pg_hba.conf
+        engine = create_engine('postgresql://catalog:password@localhost/catalog')
+
+    5. $python /var/www/catalog/catalog/database_setup.py
+
+       $python /var/www/catalog/catalog/alumni.py
+
+    6. Make sure no remote connections to the database are allowed.
+
+      $sudo nano /etc/postgresql/9.5/main/pg_hba.conf
+
+    ```
     You will see the file looks like:
     local   all             postgres                                peer
     local   all             all                                     peer
     host    all             all             127.0.0.1/32            md5
     host    all             all             ::1/128                 md5
 
+    ```
 
     Check URL: http://54.210.72.218
 
     It works great!!!
 
     **Fix third party login problem**
+
+    Update the Google OAuth client secrets file
+
+    Fill in the client_id and client_secret fields in the file g_client_secrets.json. Also change the javascript_origins field to the IP address and AWS assigned URL of the host. In this instance that would be:
+    "javascript_origins":["http://54.210.72.218",
+    "http://ec2-54-210-72-218.compute-1.amazonaws.com"]
 
     
