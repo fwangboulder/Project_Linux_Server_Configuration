@@ -367,7 +367,7 @@ In order for your project to be reviewed, the grader needs to be able to log in 
 
 ##Section VII: Apache
 
-  **A. Install Apache**
+**A. Install Apache**
 
     ```
       $sudo apt-get install apache2
@@ -379,39 +379,39 @@ In order for your project to be reviewed, the grader needs to be able to log in 
       you will see the apache default index.html content
 
     ```
-  **B. Configure Apache**
+**B. Configure Apache**
 
-  Configure Apache to hand-off certain requests to an application handler - mod_wsgi
+  1. Configure Apache to hand-off certain requests to an application handler - mod_wsgi
 
-  Install mod_wsgi
+      Install mod_wsgi
 
 
 
-  $sudo apt-get install libapache2-mod-wsgi
+      $sudo apt-get install libapache2-mod-wsgi
 
-  You then need to configure Apache to handle requests using the WSGI module.
-  You’ll do this by editing the /etc/apache2/sites-enabled/000-default.conf file.
-  This file tells Apache how to respond to requests, where to find the files for a particular site and much more.
+      You then need to configure Apache to handle requests using the WSGI module.
+      You’ll do this by editing the /etc/apache2/sites-enabled/000-default.conf file.
+      This file tells Apache how to respond to requests, where to find the files for a particular site and much more.
 
-  $sudo vi /etc/apache2/sites-enabled/000-default.conf
+      $sudo vi /etc/apache2/sites-enabled/000-default.conf
 
-  Add the following line at the end of the <VirtualHost * : 80> block, right before the closing </VirtualHost> line:
-  WSGIScriptAlias / /var/www/html/myapp.wsgi
+      Add the following line at the end of the <VirtualHost * : 80> block, right before the closing </VirtualHost> line:
+      WSGIScriptAlias / /var/www/html/myapp.wsgi
 
-  Restart Apache:
+  2. Restart Apache:
 
-  $sudo apache2ctl restart
+    $sudo apache2ctl restart
 
-  Check URL: 54.210.72.218  No Found
+    Check URL: 54.210.72.218  No Found
 
-  What happened?!!
+  3. What happened?!!
 
-  You just defined the name of the file you need to write within your Apache
-  configuration by using the WSGIScriptAlias directive. Despite having the
-  extension .wsgi, these are just Python applications.
-  Create the /var/www/html/myapp.wsgi file:
+    You just defined the name of the file you need to write within your Apache
+    configuration by using the WSGIScriptAlias directive. Despite having the
+    extension .wsgi, these are just Python applications.
+    Create the /var/www/html/myapp.wsgi file:
 
-  $sudo vi /var/www/html/myapp.wsgi. Within this file, write the following application:
+    $sudo vi /var/www/html/myapp.wsgi. Within this file, write the following application:
 
       ```
         def application(environ, start_response):
@@ -424,18 +424,18 @@ In order for your project to be reviewed, the grader needs to be able to log in 
           return [output]
       ```
 
-  Check URL: 54.210.72.218
+    Check URL: 54.210.72.218
 
-  Hello World!   This means it works.
+    Hello World!   This means it works.
 
 ##Section VIII: Deploy Flask Application in Ubuntu
 
-  Reference:
+Reference:
     https://www.digitalocean.com/community/tutorials/how-to-deploy-a-flask-application-on-an-ubuntu-vps
 
 
 
-  **A. Install Git**
+**A. Install Git**
 
   $sudo apt-get install git
 
@@ -448,7 +448,7 @@ In order for your project to be reviewed, the grader needs to be able to log in 
 
       ```
 
-  **B. Git Clone Project Item Catalog to this server**
+**B. Git Clone Project Item Catalog to this server**
 
   $sudo mkdir /var/www/catalog
 
@@ -461,7 +461,7 @@ In order for your project to be reviewed, the grader needs to be able to log in 
   $ls
 
 
-  **C. Install Flask**
+**C. Install Flask**
 
 
   1. $sudo apt-get install python-pip
@@ -505,7 +505,7 @@ In order for your project to be reviewed, the grader needs to be able to log in 
 
     $deactivate
 
-  **D. Config and Enable a New Virtual Host**
+**D. Config and Enable a New Virtual Host**
 
   1. $sudo vi /etc/apache2/sites-available/catalog.conf
 
@@ -549,7 +549,7 @@ In order for your project to be reviewed, the grader needs to be able to log in 
         Change all fbclientsecrets.json to /var/www/catalog/catalog/fbclientsecrets.json
 
 
-  **E. Create catalog.wsgi File**
+**E. Create catalog.wsgi File**
 
   1. $sudo vi /var/www/catalog/catalog.wsgi
 
@@ -566,7 +566,7 @@ In order for your project to be reviewed, the grader needs to be able to log in 
 
     ```
 
-  **F. Install and configure PostgreSQL**
+**F. Install and configure PostgreSQL**
 
   Reference:
      https://github.com/rrjoson/udacity-linux-server-configuration
@@ -614,9 +614,9 @@ In order for your project to be reviewed, the grader needs to be able to log in 
 
     It works great!!!
 
-  **G. Fix third party login problem**
+**G. Fix third party login problem**
 
-  Google Sign In:
+  1. Google Sign In:
 
   Go to Google API console: https://accounts.google.com/ServiceLogin?service=cloudconsole&ltmpl=api&osid=1&passive=true&continue=https://console.developers.google.com/
 
@@ -654,7 +654,7 @@ In order for your project to be reviewed, the grader needs to be able to log in 
     check the error. one possible reason is that  you forget the step 3 of
     "Config and Enable a New Virtual Host" part of this Section.
 
-  Facebook sign in:
+  2. Facebook sign in:
 
   Log in Facebook:
     https://www.facebook.com/login.php?next=https%3A%2F%2Fdevelopers.facebook.com%2Fapps
