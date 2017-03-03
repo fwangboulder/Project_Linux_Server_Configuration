@@ -564,7 +564,7 @@ Reference:
         from catalog import app as application
         application.secret_key = 'super_secret_key'
 
-    ```
+        ```
 
 **F. Install and configure PostgreSQL**
 
@@ -601,18 +601,18 @@ Reference:
 
       $sudo nano /etc/postgresql/9.5/main/pg_hba.conf
 
-    ```
-    You will see the file looks like:
-    local   all             postgres                                peer
-    local   all             all                                     peer
-    host    all             all             127.0.0.1/32            md5
-    host    all             all             ::1/128                 md5
+      ```
+      You will see the file looks like:
+      local   all             postgres                                peer
+      local   all             all                                     peer
+      host    all             all             127.0.0.1/32            md5
+      host    all             all             ::1/128                 md5
 
-    ```
+      ```
 
-    Check URL: http://54.210.72.218
+      Check URL: http://54.210.72.218
 
-    It works great!!!
+      It works great!!!
 
 **G. Fix third party login problem**
 
