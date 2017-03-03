@@ -278,13 +278,12 @@ Application URL: http://ec2-54-210-72-218.compute-1.amazonaws.com/
 
 ##Section VI: UFW configuration and change port to 2200
 
-Warning: When changing the SSH port, make sure that the firewall is open for port 2200 first, so that you don't lock yourself out of the server. Review this video for details!
-Give grader access.
-In order for your project to be reviewed, the grader needs to be able to log in to your server.
-    Configure the Uncomplicated Firewall (UFW) to only allow incoming connections
-    for SSH (port 2200, default 22), HTTP (port 80), www.
+Warning: When changing the SSH port, make sure that the firewall is open for port 2200 first, so that you don't lock yourself out of the server.
+Give grader access. The grader needs to be able to log in to your server.
+Configure the Uncomplicated Firewall (UFW) to only allow incoming connections
+for SSH (port 2200, default 22), HTTP (port 80), www.
 
-      ```
+ ```
       $sudo ufw status
       $sudo ufw allow ssh
       $sudo ufw allow www
@@ -295,11 +294,10 @@ In order for your project to be reviewed, the grader needs to be able to log in 
 
 
       Status: active
+ ```
+Result:
 
-      ```
-      Result:
-
-      ```
+ ```
       To                         Action      From
       --                         ------      ----
       22                         ALLOW       Anywhere
@@ -311,7 +309,7 @@ In order for your project to be reviewed, the grader needs to be able to log in 
       22/tcp (v6)                ALLOW       Anywhere (v6)
       80/tcp (v6)                ALLOW       Anywhere (v6)
 
-      ```
+ ```
 
     **Change port from default 22 to 2200**
 
@@ -441,12 +439,12 @@ Reference:
 
   Configure git:
 
-      ```
+   ```
       git config --global user.name <Your User Name>
       git config --global user.email <youruseremail@domain.com>
       git config --list
 
-      ```
+   ```
 
 **B. Git Clone Project Item Catalog to this server**
 
@@ -492,7 +490,7 @@ Reference:
 
     $python __init__.py
 
-        ```
+      ```
         (virtualenv) grader@ip-172-26-6-138:/var/www/catalog/catalog$ sudo python __init__.py
           university
           * Running on http://0.0.0.0:9000/ (Press CTRL+C to quit)
@@ -500,7 +498,7 @@ Reference:
           university
           * Debugger is active!
           * Debugger pin code: 119-102-102
-        ```
+      ```
   7. Deactivate the virtual environment:
 
     $deactivate
@@ -553,18 +551,18 @@ Reference:
 
   1. $sudo vi /var/www/catalog/catalog.wsgi
 
-        Paste the following content into it:
+    Paste the following content into it:
 
-        ```
-        import sys
-        import logging
-        logging.basicConfig(stream=sys.stderr)
-        sys.path.insert(0, "/var/www/catalog/")
+    ```
+      import sys
+      import logging
+      logging.basicConfig(stream=sys.stderr)
+      sys.path.insert(0, "/var/www/catalog/")
 
-        from catalog import app as application
-        application.secret_key = 'super_secret_key'
+      from catalog import app as application
+      application.secret_key = 'super_secret_key'
 
-        ```
+    ```
 
 **F. Install and configure PostgreSQL**
 
