@@ -1,12 +1,35 @@
 # Project_Linux_Server_Configuration
 Project 7 Udacity Full Stack Developer Nanodegree
 
-Make baseline installation of a Linux distribution on a virtual machine and
-prepare it to host my web applications.
+In this project, I installed and configured a web and database server and host my
+web application alumni. This README file will give a step-by-step how to access,
+secure and perform the initial configuration of a bare-bones Linux server.
+
+I have deployed my Item Catalog web applications to a publicly accessible
+server and properly secured my application to ensures my application remains
+stable and that my user’s data is safe.
+
+Public IP address: 54.210.72.218
+
+SSH port: 2200
+
+Application URL: http://ec2-54-210-72-218.compute-1.amazonaws.com/
+
+**What I have Done?**
+
+1. Start a new Ubuntu Linux server instance on Amazon Lightsail (Section I).
+2. Configure the timezone to UTC (Section I).
+3. Update all currently installed packages (Section II).
+4. Create an SSH key pair for Ubuntu using the ssh-keygen tool and check user information (Setction III).
+5. Create a new user account named grader and set the SSH key pair (Section IV).
+6. Give grader the permission to sudo (Section V).
+7. Configure the Uncomplicated Firewall (UFW) to only allow incoming connections for SSH (port 2200), HTTP (port 80) (Section VI).
+8. Change the SSH port from 22 to 2200. Make sure to configure the Lightsail firewall to allow it (Section VI).
+9. Install and configure Apache to serve a Python mod_wsgi application (Section VII).
+10. Clone and setup Item Catalog project from the Github repository created earlier in this Nanodegree program. Set it up in my server so that it functions correctly when visiting my server’s IP address in a browser (Section VIII): Configure apache, install and configure PostgreSQL, update google sign-in and facebook sign-in URIs.
 
 
-
-##Section I: Amazon Lightsail Start
+##Section I: Get the Server
 
   1. Log in!  Create an Amazon Web Services account if you do not have one.
 
@@ -36,7 +59,14 @@ prepare it to host my web applications.
 
       Universal Time is now:  Fri Mar  3 02:52:36 UTC 2017.
 
-##Section II: Key generation
+##Section II: Update Software
+
+  1. $sudo apt-get update
+
+  2. $sudo apt-get upgrade
+
+
+##Section III: Key generation
 
 
   1. Local terminal
@@ -49,14 +79,20 @@ prepare it to host my web applications.
 
     copy the content
 
-  2. remote terminal connected through the account.
+  2. Remote terminal connected through the web account.
 
     $vi /home/ubuntu/.ssh/authorized_keys
 
-    paste the content of id_rsa.pub into authorized_keys. Make sure you do not have
-    extra space for the content. Double check id_rsa.pub and authorized have exactly the same content.
+    Paste the content of id_rsa.pub into authorized_keys.
 
-  3. Go back to local terminal:
+    Double check id_rsa.pub and authorized have exactly the same content.
+
+    If you failed in step 3 with timeout or other error, you might have a not matching
+    key.
+
+  3. Back to local terminal:
+
+    Login ubuntu from local terminal:
 
     $ ssh ubuntu@54.210.72.218
 
@@ -67,17 +103,18 @@ prepare it to host my web applications.
 
     type yes. Now you log in from local terminal to remote terminal using ubuntu.
 
-##Section III: Update Software
+    **If failed, go back to step 1 and 2. You must have a mistake there!!!**
 
-  1. $sudo apt-get update
+  4. $sudo chmod 700 ~/.ssh
 
-  2. $sudo apt-get upgrade
+  5. $sudo chmod 644 ~/.ssh/authorized_keys
 
-##Section IV: Install Finger
 
-  1. $sudo apt-get install finger
+    Now I will install Finger to check my user information easily.
 
-  2. $finger ubuntu
+  6. $sudo apt-get install finger
+
+  7. $finger ubuntu
 
       Display the followings information about user ubuntu.
 
@@ -93,7 +130,7 @@ prepare it to host my web applications.
           No mail.
             No Plan.
             ```
-  3. $finger root
+  8. $finger root
 
       ```
       Login: root           			Name: root
@@ -103,11 +140,11 @@ prepare it to host my web applications.
       No Plan.
       ```
 
-  4. $finger grader
+  9. $finger grader
 
       finger: grader: no such user.
 
-##Section V: Create a new user grader
+##Section IV: Create a new user grader
 
       If you exit the remote terminal, log in as ubuntu.
 
@@ -167,7 +204,7 @@ prepare it to host my web applications.
     Warning: Permanently added '54.210.218,54.210.0.218' (ECDSA) to the list of known hosts.
     Permission denied (publickey).
     ```
-    The publickey has not been set right.
+    What happened? The publickey has not been set right.
 
     check the key generation section. copy content of id_rsa.pub again and paste
 
@@ -179,8 +216,7 @@ prepare it to host my web applications.
 
       c. $sudo vi /home/grader/.ssh/authorized_keys
 
-          Paste the content of id_rsa.pub into this file. Double check there are no
-          missiong characters or extra spaces.
+          Paste the content of id_rsa.pub into this file.
 
         Since We might want to log in as root, I will set this key to root too.
 
@@ -188,23 +224,29 @@ prepare it to host my web applications.
 
           Paste the content of id_rsa.pub for user root.
 
+
       e. $exit
 
-      f. log in as grader: $ssh grader@54.210.72.218
+      f. Log in as root:
 
-      g. log out and try log in as root:
+          $ssh root@54.210.72.218
+
+
+      g. log in as grader: $ssh grader@54.210.72.218
+
+      h. Log out and try log in as grader:
 
           $exit
 
-          $ssh root@54.210.72.218
+          $ssh grader@54.210.72.218
 
       Note: if you followed my instructions and still cannot log in for the users, probably
       you have a mistake for the key file. Go back to check whether your authorized_keys file
       has exactly the same content as that of id_rsa.pub.
 
-##Section VI: Give grader the permission to sudo
+##Section V: Give grader the permission to sudo
 
-  1. Log in as grader: $ssh grader@54.210.72.218
+  1. Log in as grader from local terminal: $ssh grader@54.210.72.218
 
   2. $sudo ls /etc/sudoers.d
 
@@ -212,16 +254,31 @@ prepare it to host my web applications.
         grader is not in the sudoers file.  This incident will be reported.
 
         This means grader is not in the sudo list.
+
   3. $exit
+
        $ssh root@54.210.72.218
+
        $sudo vi /etc/sudoers.d/grader
+
        Add:
        grader ALL=(ALL) NOPASSWD:ALL
 
        Now the grader user can use sudo.
 
-##Section VII: UFW configuration
+       $ exit
 
+       $ssh grader@54.210.72.218
+
+       $sudo chmod 700 ~/.ssh
+
+       $sudo chmod 644 ~/.ssh/authorized_keys
+
+##Section VI: UFW configuration and change port to 2200
+
+Warning: When changing the SSH port, make sure that the firewall is open for port 2200 first, so that you don't lock yourself out of the server. Review this video for details!
+Give grader access.
+In order for your project to be reviewed, the grader needs to be able to log in to your server.
     Configure the Uncomplicated Firewall (UFW) to only allow incoming connections
     for SSH (port 2200, default 22), HTTP (port 80), www.
 
@@ -235,7 +292,7 @@ prepare it to host my web applications.
       $sudo ufw status
 
 
-        Status: active
+      Status: active
 
       ```
       Result:
@@ -254,39 +311,60 @@ prepare it to host my web applications.
 
       ```
 
-##Section VIII: Change port from default 22 to 2200
+    **Change port from default 22 to 2200**
 
-  ```
+      ```
 
-  $sudo vi /etc/ssh/sshd_config
+      $sudo vi /etc/ssh/sshd_config
 
-    change port 22 to port 2200
+        change port 22 to port 2200
 
-  $sudo service ssh restart
+      $sudo service ssh restart
 
-  check if the port has been changed successfully.
+        check if the port has been changed successfully.
 
-  $ exit
+      $ exit
 
-  $ssh grader@54.210.72.218
+      $ssh grader@54.210.72.218
 
-    using default port 22 will not work anymore
+        Default port 22 will not work anymore for log in
 
-  ssh: connect to host 54.210.72.218 port 22: Connection refused
+        ssh: connect to host 54.210.72.218 port 22: Connection refused
 
-  $ssh grader@54.210.72.218 -p 2200
+      $ssh grader@54.210.72.218 -p 2200
 
-    This command gives a time out error because you did not set your account firewall
+        This command gives a time out error because you did not set your account firewall
 
-    Go to your amazon lightsail and set the networking. Add a custome TCP 2200
+        Log in amazon lightsail acount and set the networking: Add a custome TCP 2200
 
-   then run $ssh grader@54.210.72.218 -p 2200
+      $ssh grader@54.210.72.218 -p 2200
 
-   It works now!!!
+        It works now!!!
 
-   ```
+      $sudo ufw status
 
-##Section IX: Apache
+        Delete the allow port 22.
+
+      $sudo ufw delete allow 22/tcp
+
+      Reference:
+      https://www.digitalocean.com/community/tutorials/how-to-setup-a-firewall-with-ufw-on-an-ubuntu-and-debian-cloud-server
+
+      You should have the following display after you run $sudo ufw status, delete extra permission.
+
+
+      To                         Action      From
+      --                         ------      ----
+      2200/tcp                   ALLOW       Anywhere
+      80/tcp                     ALLOW       Anywhere
+      2200/tcp (v6)              ALLOW       Anywhere (v6)
+      80/tcp (v6)                ALLOW       Anywhere (v6)
+
+
+      ```
+
+##Section VII: Apache
+
   **Install Apache**
 
     ```
@@ -304,35 +382,38 @@ prepare it to host my web applications.
 
       Configure Apache to hand-off certain requests to an application handler - mod_wsgi
 
-    **install mod_wsgi**
+      Install mod_wsgi
 
 
 
-    $sudo apt-get install libapache2-mod-wsgi
+      $sudo apt-get install libapache2-mod-wsgi
 
-    You then need to configure Apache to handle requests using the WSGI module.
-    You’ll do this by editing the /etc/apache2/sites-enabled/000-default.conf file.
-    This file tells Apache how to respond to requests, where to find the files
-    for a particular site and much more.
+      You then need to configure Apache to handle requests using the WSGI module.
+      You’ll do this by editing the /etc/apache2/sites-enabled/000-default.conf file.
+      This file tells Apache how to respond to requests, where to find the files
+      for a particular site and much more.
 
-    $sudo vi /etc/apache2/sites-enabled/000-default.conf
+      $sudo vi /etc/apache2/sites-enabled/000-default.conf
 
-    add the following line at the end of the <VirtualHost * : 80> block, right
-    before the closing </VirtualHost> line:
-    WSGIScriptAlias / /var/www/html/myapp.wsgi
+      add the following line at the end of the <VirtualHost * : 80> block, right
+      before the closing </VirtualHost> line:
+      WSGIScriptAlias / /var/www/html/myapp.wsgi
 
-    restart Apache: $sudo apache2ctl restart
+      restart Apache: $sudo apache2ctl restart
 
-    Check URL: 54.210.72.218  No Found Do not feel panic!! Continue~~~
+      Check URL: 54.210.72.218  No Found
 
-    You just defined the name of the file you need to write within your Apache
-    configuration by using the WSGIScriptAlias directive. Despite having the
-     extension .wsgi, these are just Python applications.
-     Create the /var/www/html/myapp.wsgi file using the command
-     sudo vi /var/www/html/myapp.wsgi. Within this file, write the following application:
+      What happened?!!
 
-     ```
-      def application(environ, start_response):
+      You just defined the name of the file you need to write within your Apache
+      configuration by using the WSGIScriptAlias directive. Despite having the
+      extension .wsgi, these are just Python applications.
+      Create the /var/www/html/myapp.wsgi file:
+
+      $sudo vi /var/www/html/myapp.wsgi. Within this file, write the following application:
+
+      ```
+        def application(environ, start_response):
           status = '200 OK'
           output = 'Hello World!'
 
@@ -340,16 +421,16 @@ prepare it to host my web applications.
           start_response(status, response_headers)
 
           return [output]
-    ```
+      ```
 
-    Check URL: 54.210.72.218
+      Check URL: 54.210.72.218
 
-    You now see Hello World!
+      Hello World!   This means it works.
 
-##Section X: Deploy Flask Application in Ubuntu
+##Section VIII: Deploy Flask Application in Ubuntu
 
-reference:
-https://www.digitalocean.com/community/tutorials/how-to-deploy-a-flask-application-on-an-ubuntu-vps
+  Reference:
+    https://www.digitalocean.com/community/tutorials/how-to-deploy-a-flask-application-on-an-ubuntu-vps
 
 
 
@@ -377,6 +458,7 @@ https://www.digitalocean.com/community/tutorials/how-to-deploy-a-flask-applicati
     $sudo git clone https://github.com/fwangboulder/Project_Item_Catalog.git catalog
 
     $ls
+
 
   **Install Flask**
 
@@ -418,7 +500,7 @@ https://www.digitalocean.com/community/tutorials/how-to-deploy-a-flask-applicati
           * Debugger is active!
           * Debugger pin code: 119-102-102
         ```
-    Deactivate the virtual environment
+    Deactivate the virtual environment:
 
     $deactivate
 
@@ -454,35 +536,38 @@ https://www.digitalocean.com/community/tutorials/how-to-deploy-a-flask-applicati
       ```
     2. $sudo a2ensite catalog
 
-      enable the virtual host
+      This is to enable the virtual host
 
 
-    3. update path of client_secrets.json file
+    3. Correct the file paths of client_secrets.json and fbclientsecrets.json in __init__.py
 
         $sudo vi __init__.py
 
-        change the path to /var/www/catalog/catalog/client_secrets.json
+        Change all client_secrets.json to /var/www/catalog/catalog/client_secrets.json
+
+        Change all fbclientsecrets.json to /var/www/catalog/catalog/fbclientsecrets.json
 
 
     **Create catalog.wsgi File**
 
     1. $sudo vi /var/www/catalog/catalog.wsgi
 
-        paste this into it:
-        ```
-    import sys
-    import logging
-    logging.basicConfig(stream=sys.stderr)
-    sys.path.insert(0, "/var/www/catalog/")
+        Paste the following content into it:
 
-    from catalog import app as application
-    application.secret_key = 'super_secret_key'
+        ```
+        import sys
+        import logging
+        logging.basicConfig(stream=sys.stderr)
+        sys.path.insert(0, "/var/www/catalog/")
+
+        from catalog import app as application
+        application.secret_key = 'super_secret_key'
 
     ```
 
     **Install and configure PostgreSQL**
 
-    reference:
+    Reference:
      https://github.com/rrjoson/udacity-linux-server-configuration
      https://www.digitalocean.com/community/tutorials/how-to-install-and-use-postgresql-on-ubuntu-16-04
 
@@ -537,6 +622,7 @@ https://www.digitalocean.com/community/tutorials/how-to-deploy-a-flask-applicati
     Add JavaScript origins and redirect URIs:
 
     Authorized JavaScript origins:
+
     http://localhost:9000
 
     http://54.210.72.218
@@ -549,10 +635,51 @@ https://www.digitalocean.com/community/tutorials/how-to-deploy-a-flask-applicati
 
     http://ec2-54-210-72-218.compute-1.amazonaws.com/university/oauth2callback
 
-    Changed the client_serects file to make sure add the extra URIs.
+    Changed the client_serects.json file to make sure add the extra URIs. This
+    is super important!!!
 
-    Restart apache server and enabled virtual host
+    Restart apache server and enabled virtual host:
 
     $sudo service apache2 restart
 
     $sudo a2ensite catalog
+
+    Visit http://ec2-54-210-72-218.compute-1.amazonaws.com/
+
+    If not working:
+
+    $sudo tail -f /var/log/apache2/error.log
+
+    check the error. one possible reason is that  you forget the step 3 of
+    "Config and Enable a New Virtual Host" part of this Section.
+
+    **facebook sign in**
+
+    Log in Facebook:
+    https://www.facebook.com/login.php?next=https%3A%2F%2Fdevelopers.facebook.com%2Fapps
+
+    Find your app and on the left panel of the web page, you can see add product option.
+    Click +Add Product;
+    Then click GetStarted of Facebook Login
+
+    In Valid OAuth redirect URIs, add the following:
+
+    http://ec2-54-210-72-218.compute-1.amazonaws.com
+
+    http://54.210.72.218
+
+
+    Restart apache server and enabled virtual host:
+
+    $sudo service apache2 restart
+
+    $sudo a2ensite catalog
+
+    Visit http://ec2-54-210-72-218.compute-1.amazonaws.com/
+
+    If not working:
+
+    $sudo tail -f /var/log/apache2/error.log
+
+    check the error. one possible reason is that  you forget the step 3 of
+    "Config and Enable a New Virtual Host" part of this Section.
