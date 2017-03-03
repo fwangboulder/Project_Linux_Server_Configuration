@@ -225,20 +225,21 @@ prepare it to host my web applications.
     Configure the Uncomplicated Firewall (UFW) to only allow incoming connections
     for SSH (port 2200, default 22), HTTP (port 80), www.
 
-    ```
-    $sudo ufw status
-    $sudo ufw allow ssh
-    $sudo ufw allow www
-    $sudo ufw allow 2200/tcp
-    $sudo ufw allow 22/tcp
-    $sudo ufw enable
-    $sudo ufw status
+      ```
+      $sudo ufw status
+      $sudo ufw allow ssh
+      $sudo ufw allow www
+      $sudo ufw allow 2200/tcp
+      $sudo ufw allow 22/tcp
+      $sudo ufw enable
+      $sudo ufw status
 
 
-      Status: active
+        Status: active
+
       ```
       Result:
-      
+
       ```
       To                         Action      From
       --                         ------      ----
@@ -289,15 +290,15 @@ prepare it to host my web applications.
   **Install Apache**
 
     ```
-  $sudo apt-get install apache2
+      $sudo apt-get install apache2
 
-  $ls /var/www/html
+      $ls /var/www/html
 
-   check url: 54.210.72.218
+      check url: 54.210.72.218
 
-   you will see the apache default index.html content
+      you will see the apache default index.html content
 
-   ```
+    ```
 
    **Configure Apache**
 
@@ -331,12 +332,12 @@ prepare it to host my web applications.
      sudo vi /var/www/html/myapp.wsgi. Within this file, write the following application:
 
      ```
-     def application(environ, start_response):
+      def application(environ, start_response):
           status = '200 OK'
           output = 'Hello World!'
 
           response_headers = [('Content-type', 'text/plain'), ('Content-Length', str(len(output)))]
-    start_response(status, response_headers)
+          start_response(status, response_headers)
 
           return [output]
     ```
@@ -362,6 +363,7 @@ https://www.digitalocean.com/community/tutorials/how-to-deploy-a-flask-applicati
       git config --global user.name <Your User Name>
       git config --global user.email <youruseremail@domain.com>
       git config --list
+      
       ```
 
   **Git Clone Project Item Catalog to this server**
