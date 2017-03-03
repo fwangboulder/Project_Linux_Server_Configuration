@@ -379,40 +379,39 @@ In order for your project to be reviewed, the grader needs to be able to log in 
       you will see the apache default index.html content
 
     ```
+  **B. Configure Apache**
 
-   **B. Configure Apache**
+  Configure Apache to hand-off certain requests to an application handler - mod_wsgi
 
-      Configure Apache to hand-off certain requests to an application handler - mod_wsgi
-
-      Install mod_wsgi
-
+  Install mod_wsgi
 
 
-      $sudo apt-get install libapache2-mod-wsgi
 
-      You then need to configure Apache to handle requests using the WSGI module.
-      You’ll do this by editing the /etc/apache2/sites-enabled/000-default.conf file.
-      This file tells Apache how to respond to requests, where to find the files
-      for a particular site and much more.
+  $sudo apt-get install libapache2-mod-wsgi
 
-      $sudo vi /etc/apache2/sites-enabled/000-default.conf
+  You then need to configure Apache to handle requests using the WSGI module.
+  You’ll do this by editing the /etc/apache2/sites-enabled/000-default.conf file.
+  This file tells Apache how to respond to requests, where to find the files for a particular site and much more.
 
-      add the following line at the end of the <VirtualHost * : 80> block, right
-      before the closing </VirtualHost> line:
-      WSGIScriptAlias / /var/www/html/myapp.wsgi
+  $sudo vi /etc/apache2/sites-enabled/000-default.conf
 
-      restart Apache: $sudo apache2ctl restart
+  Add the following line at the end of the <VirtualHost * : 80> block, right before the closing </VirtualHost> line:
+  WSGIScriptAlias / /var/www/html/myapp.wsgi
 
-      Check URL: 54.210.72.218  No Found
+  Restart Apache:
 
-      What happened?!!
+  $sudo apache2ctl restart
 
-      You just defined the name of the file you need to write within your Apache
-      configuration by using the WSGIScriptAlias directive. Despite having the
-      extension .wsgi, these are just Python applications.
-      Create the /var/www/html/myapp.wsgi file:
+  Check URL: 54.210.72.218  No Found
 
-      $sudo vi /var/www/html/myapp.wsgi. Within this file, write the following application:
+  What happened?!!
+
+  You just defined the name of the file you need to write within your Apache
+  configuration by using the WSGIScriptAlias directive. Despite having the
+  extension .wsgi, these are just Python applications.
+  Create the /var/www/html/myapp.wsgi file:
+
+  $sudo vi /var/www/html/myapp.wsgi. Within this file, write the following application:
 
       ```
         def application(environ, start_response):
@@ -425,9 +424,9 @@ In order for your project to be reviewed, the grader needs to be able to log in 
           return [output]
       ```
 
-      Check URL: 54.210.72.218
+  Check URL: 54.210.72.218
 
-      Hello World!   This means it works.
+  Hello World!   This means it works.
 
 ##Section VIII: Deploy Flask Application in Ubuntu
 
