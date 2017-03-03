@@ -206,9 +206,9 @@ Application URL: http://ec2-54-210-72-218.compute-1.amazonaws.com/
     ```
     What happened? The publickey has not been set right.
 
-    check the key generation section. copy content of id_rsa.pub again and paste
+    Check the key generation section. copy content of id_rsa.pub again and paste it for user grader as followings:
 
-    it for user grader as followings:
+      ```
 
       a. log in as ubuntu again: $ssh ubuntu@54.210.72.218
 
@@ -243,6 +243,8 @@ Application URL: http://ec2-54-210-72-218.compute-1.amazonaws.com/
       Note: if you followed my instructions and still cannot log in for the users, probably
       you have a mistake for the key file. Go back to check whether your authorized_keys file
       has exactly the same content as that of id_rsa.pub.
+
+      ```
 
 ##Section V: Give grader the permission to sudo
 
