@@ -682,3 +682,6 @@ Reference:
 
     check the error. one possible reason is that  you forget the step 3 of
     "D. Config and Enable a New Virtual Host" part of this Section.
+
+**An awesome free book The Linux® Command Line as a cheatsheet.*
+It is [here](http://linuxcommand.org/tlcl.php).
